@@ -1,6 +1,8 @@
 // hago conexiones con html para usar el DOM
 const listaPokes = document.getElementById("listaDePokes");
 const loading = document.getElementById("loading");
+const pokeSearch = document.getElementById("pokeSearch");
+const pokeSearching = document.getElementById("searching")
 // Sirve para caapitalizar una palabra (Vuelve la mayúscula la primera letra)
 const capitalizar = (palabra)=>palabra.replace(/^\w/,(c) => c.toUpperCase());
 
@@ -75,6 +77,7 @@ let limitePokes = 30;
 // con esta fnAsync pinto las tarjetas de los pokemones
 // el parámetro que recibe por defecto es false y quiere decir que si se usa la fn
 // es como si se reiniciara la página, en caso de true recarga la página pero con más pokemones(nuevo límite +30)
+let isCharging= true;
 const pintarPokes = async (boolean=false) => {
     try {
         let resultado = await obtenerPokes();
@@ -83,10 +86,10 @@ const pintarPokes = async (boolean=false) => {
         if(boolean){limitePokes+=30;loading.innerHTML=`
             <div class="spinner-border  mt-5 fs-1 " role="status" >
                 <span class="visually-hidden">Loading...</span>
-            </div>`;cargar12Cartas()
-
+            </div>`;cargar12Cartas();
+            isCharging=true
         }else{
-            pokesCant=0;limitePokes=30;(pokesCant==limitePokes)?listaPokes.innerHTML="":cargar12Cartas();
+            pokesCant=0;limitePokes=30;(pokesCant==limitePokes)?listaPokes.innerHTML="":cargar12Cartas();isCharging=true;
         }
 
 
@@ -102,7 +105,7 @@ const pintarPokes = async (boolean=false) => {
             // hasta un tome minimo de 30
                 listaPokes.innerHTML += `
             
-                <div class="col-12 col-sm-6 col-md-6 col-lg-3 col-xl-2 mt-5" id="Poke${pokesCant}">
+                <div class="col-12 col-sm-6 col-md-6 col-lg-3 col-xl-2 mt-5" id="Poke${nombre}">
                     <div class="card p-3 w-auto border border-dark border-opacity-25 border-5 rounded" >
                         <img src="${pokeIMGS}" class="card-img-top img-fluid " id="Img${pokesCant}" alt="..." onclick="agrandarImg('Img${pokesCant}')">
                         <div class="card-body p-0 text-center border-top border-4 border-opacity-25">
@@ -127,7 +130,7 @@ const pintarPokes = async (boolean=false) => {
             if(pokesCant==limitePokes){
                 loading.innerHTML = ``;
                 limpiar12Cartas();
-                
+                isCharging=false;
             }
             
             
@@ -145,10 +148,47 @@ pintarPokes();
 // animaciones:
 const agrandarImg = (id) =>{
     let imagen = document.getElementById(id);
-    let estilo = "transition: all 1s; width:200px"
-    if(imagen.style.width != "200px"){
-        imagen.style =estilo
-    }else{
+    if(imagen.style.width == "200px"){
         imagen.style = "transition:all 1s; width:150px;"
+    }else if(imagen.style.width == "150px"){
+        imagen.style ="transition: all 1s; width:200px"
     }
 }
+// busqueda de tarjetas actuales
+pokeSearch.value = ""
+
+pokeSearch.addEventListener('keyup', e =>{
+    if(e.key === 'Enter' || e.keyCode === 13){
+        try {
+            if(!isCharging){
+                let nombrePoke = (e.srcElement.value)?.toLowerCase()
+                let tarjetaBuscada = document.querySelector(`#Poke${(nombrePoke)}`);            
+                if(`Poke${(nombrePoke).toLowerCase()}` == tarjetaBuscada?.id){
+                    tarjetaBuscada.style = "background-color:black !important;border-radius:25px;"
+                    setTimeout(() => {
+                        tarjetaBuscada.style = "background-color:none !important;"
+                    }, 500);
+                    setTimeout(() => {
+                        tarjetaBuscada.style = "background-color:black !important;border-radius:25px;"
+                    }, 1000);
+                    setTimeout(() => {
+                        tarjetaBuscada.style = "background-color:none !important;"
+                    }, 1500);
+                    for(let i=1;i<= listaPokes.childNodes.length;i++){
+                        if(`Poke${(nombrePoke)?.toLowerCase()}` != listaPokes.childNodes[i]?.id){
+                            listaPokes.childNodes[i].hidden = !(listaPokes.childNodes[i].hidden)
+                        }
+                    }
+                    
+                }
+            }
+        } catch (error) {
+            
+        }
+    }
+    
+
+})
+pokeSearching.addEventListener('submit',e =>{
+    e.preventDefault()
+})
