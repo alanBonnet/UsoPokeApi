@@ -1,0 +1,33 @@
+body{
+    background-color: rgb(208, 222, 232);
+}
+.container{
+    background: rgb(180,58,58);
+    background: linear-gradient(121deg, rgba(180,58,58,0.5550420851934523) 18%, rgba(255,0,0,1) 33%, rgba(252,69,69,1) 75%, rgba(252,69,69,0.26932779947916663) 100%);
+}
+
+.border-pill-top{
+    border-radius:50px 50px 0 0;
+}
+.Poketype{
+    width: 40px;
+}
+
+
+/* Elimina la funcionalidad del border pill en menores de w:575px  */
+@media screen and (max-width:575px) {
+    .border-pill-top{
+        border-radius:0;
+    }
+    .card-img-top{
+        padding: 0;
+        margin-left: auto;
+        margin-right: auto;
+        width: 150px;
+    }
+    .card-img-top:hover{
+        transition:all .5s ;
+        width: 200px;
+    }
+    
+}
