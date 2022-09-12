@@ -78,6 +78,7 @@ let limitePokes = 30;
 // el parámetro que recibe por defecto es false y quiere decir que si se usa la fn
 // es como si se reiniciara la página, en caso de true recarga la página pero con más pokemones(nuevo límite +30)
 let isCharging= true;
+let pokesHMTL = "";
 const pintarPokes = async (boolean=false) => {
     try {
         let resultado = await obtenerPokes();
@@ -89,7 +90,7 @@ const pintarPokes = async (boolean=false) => {
             </div>`;cargar12Cartas();
             isCharging=true
         }else{
-            pokesCant=0;limitePokes=30;(pokesCant==limitePokes)?listaPokes.innerHTML="":cargar12Cartas();isCharging=true;
+            (pokesCant==limitePokes)?"":cargar12Cartas();pokesCant=0;limitePokes=30;isCharging=true;
         }
 
 
@@ -103,7 +104,7 @@ const pintarPokes = async (boolean=false) => {
             let nombre = await resultado[pokesCant].pokemon_species.name;
             // cargo la tarjeta en listaPokes que es un .row y se va a ir sumando una tarjeta por pokémon
             // hasta un tome minimo de 30
-                listaPokes.innerHTML += `
+                pokesHMTL += `
             
                 <div class="col-12 col-sm-6 col-md-6 col-lg-3 col-xl-2 mt-5" id="Poke${nombre}">
                     <div class="card p-3 w-auto border border-dark border-opacity-25 border-5 rounded" >
@@ -131,6 +132,7 @@ const pintarPokes = async (boolean=false) => {
                 loading.innerHTML = ``;
                 limpiar12Cartas();
                 isCharging=false;
+                listaPokes.innerHTML = pokesHMTL;
             }
             
             
