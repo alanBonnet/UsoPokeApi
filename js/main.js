@@ -3,6 +3,7 @@ const listaPokes = document.getElementById("listaDePokes");
 const loading = document.getElementById("loading");
 const pokeSearch = document.getElementById("pokeSearch");
 const pokeSearching = document.getElementById("searching")
+const pokeVerMas = document.getElementById("botonVermas")
 // Sirve para caapitalizar una palabra (Vuelve la mayúscula la primera letra)
 const capitalizar = (palabra)=>palabra.replace(/^\w/,(c) => c.toUpperCase());
 
@@ -29,6 +30,8 @@ const obtenerPokeInfo = async (pokeID,imgOData) => {
            return Poke.sprites.front_default
         }else if(imgOData === "types"){
             return [Poke.types[0]?.type.name , Poke.types[1]?.type?.name]
+        }else{
+            return "Los valores permitidos en imgOData son img o types"
         }
         
     } catch (error) {
@@ -79,12 +82,12 @@ let limitePokes = 30;
 // es como si se reiniciara la página, en caso de true recarga la página pero con más pokemones(nuevo límite +30)
 let isCharging= true;
 let pokesHMTL = "";
-const pintarPokes = async (boolean=false) => {
+const pintarPokes = async (booleanAgregar=false) => {
     try {
         let resultado = await obtenerPokes();
 
         
-        if(boolean){limitePokes+=30;loading.innerHTML=`
+        if(booleanAgregar){limitePokes+=30;loading.innerHTML=`
             <div class="spinner-border  mt-5 fs-1 " role="status" >
                 <span class="visually-hidden">Loading...</span>
             </div>`;cargar12Cartas();
@@ -145,6 +148,21 @@ const pintarPokes = async (boolean=false) => {
 }
 pintarPokes();
 
+// debo arreglar el pintarPokes(true) mas adelante para que no se vea este proceso
+setTimeout(()=>{
+    let id = setInterval(async()=>{
+        let totalPokes = await obtenerPokes();
+        if(pokesCant<totalPokes.length){
+            pintarPokes(true)
+        }else{
+            limpiar12Cartas()
+            loading.innerHTML = "";
+            isCharging=false;
+            pokeVerMas.remove()
+            clearInterval(id)
+        }
+    },3000)
+},9000)
 
 
 // animaciones:
